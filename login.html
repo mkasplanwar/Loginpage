@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page Glassmorphism</title>
+    <!-- Tambahkan Font Awesome untuk ikon mata -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('wallpaper.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        label {
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 15px;
+            background: #ffffff;
+            color: #333;
+            font-size: 14px;
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 45px;
+            right: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-group button {
+            width: 48%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .button-group button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .button-group button:active {
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #error-message {
+            display: none;
+            color: white;
+            background-color: red;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #error-message.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div id="error-message"></div>
+        <form id="loginForm" action="login.php">
+            <div class="input-group">
+                <label for="nim">NIM</label>
+                <input type="text" id="nim" name="nim" placeholder="Masukkan NIM" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Masukkan Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
+            </div>
+            <div class="button-group">
+                <button type="submit">Login</button>
+                <button type="button" onclick="window.location.href='register.html'">Daftar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById("password");
+            var toggleIcon = document.getElementById("toggleIcon");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var nim = document.getElementById("nim").value;
+            var password = document.getElementById("password").value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "login.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText); // Ubah respons menjadi JSON
+
+                    if (response.status === "success") {
+                        window.location.href = "dashboard.php";
+                    } else {
+                        showErrorMessage(response.message); // Tampilkan pesan error
+                    }
+                }
+            };
+
+            xhr.send("nim=" + nim + "&password=" + password);
+        });
+
+        function showErrorMessage(message) {
+            var errorMessage = document.getElementById("error-message");
+            errorMessage.textContent = message;
+            errorMessage.style.display = "block";
+            errorMessage.classList.add("show");
+
+            // Hilangkan pesan setelah 3 detik
+            setTimeout(function() {
+                errorMessage.classList.remove("show");
+                errorMessage.style.display = "none"; // Sembunyikan pesan
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
