@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         body {
-            background-image: url('wallpaper.png');
+            background-image: url('src/wallpaper.png');
             background-size: cover;
             background-position: center;
             display: flex;
